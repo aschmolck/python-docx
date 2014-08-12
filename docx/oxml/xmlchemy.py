@@ -700,9 +700,16 @@ class _OxmlElementBase(etree.ElementBase):
     __metaclass__ = MetaOxmlElement
 
     def __repr__(self):
-        return "<%s '<%s>' at 0x%0x>" % (
-            self.__class__.__name__, self._nsptag, id(self)
-        )
+        default = dir(etree.ElementBase)
+        from pprint import pformat
+        relevant = [k for k in dir(self)
+                    if k not in default and not k.startswith('_') and k!= 'xml' and
+                    not callable(getattr(self, k))
+                    and getattr(self, k) not in (None, [])]
+        if relevant == ['val']: return repr(self.val)
+        return "<%s '<%s>' at 0x%0x\n%s>" % (
+            self.__class__.__name__, self._nsptag, id(self),
+            pformat({k: getattr(self, k) for k in relevant}))
 
     def first_child_found_in(self, *tagnames):
         """

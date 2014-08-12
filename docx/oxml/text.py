@@ -342,6 +342,8 @@ class CT_Text(BaseOxmlElement):
     """
     ``<w:t>`` element, containing a sequence of characters within a run.
     """
+    def __repr__(self):
+        return repr(self.text) or ''
 
 
 class CT_Underline(BaseOxmlElement):
