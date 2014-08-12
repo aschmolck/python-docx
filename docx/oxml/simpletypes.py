@@ -7,9 +7,76 @@ type in the associated XML schema.
 """
 
 from __future__ import absolute_import, print_function
+import re
 
 from ..exceptions import InvalidXmlError
 from ..shared import Emu, Twips
+
+NUMBER_FORMATS = (
+    "decimal",
+    "upperRoman",
+    "lowerRoman",
+    "upperLetter",
+    "lowerLetter",
+    "ordinal",
+    "cardinalText",
+    "ordinalText",
+    "hex",
+    "chicago",
+    "ideographDigital",
+    "japaneseCounting",
+    "aiueo",
+    "iroha",
+    "decimalFullWidth",
+    "decimalHalfWidth",
+    "japaneseLegal",
+    "japaneseDigitalTenThousand",
+    "decimalEnclosedCircle",
+    "decimalFullWidth2",
+    "aiueoFullWidth",
+    "irohaFullWidth",
+    "decimalZero",
+    "bullet",
+    "ganada",
+    "chosung",
+    "decimalEnclosedFullstop",
+    "decimalEnclosedParen",
+    "decimalEnclosedCircleChinese",
+    "ideographEnclosedCircle",
+    "ideographTraditional",
+    "ideographZodiac",
+    "ideographZodiacTraditional",
+    "taiwaneseCounting",
+    "ideographLegalTraditional",
+    "taiwaneseCountingThousand",
+    "taiwaneseDigital",
+    "chineseCounting",
+    "chineseLegalSimplified",
+    "chineseCountingThousand",
+    "koreanDigital",
+    "koreanCounting",
+    "koreanLegal",
+    "koreanDigital2",
+    "vietnameseCounting",
+    "russianLower",
+    "russianUpper",
+    "none",
+    "numberInDash",
+    "hebrew1",
+    "hebrew2",
+    "arabicAlpha",
+    "arabicAbjad",
+    "hindiVowels",
+    "hindiConsonants",
+    "hindiNumbers",
+    "hindiCounting",
+    "thaiLetters",
+    "thaiNumbers",
+    "thaiCounting",
+    "bahtText",
+    "dollarText",
+    "custom",
+)
 
 
 class BaseSimpleType(object):
@@ -297,3 +364,39 @@ class ST_UniversalMeasure(BaseSimpleType):
         }[units_part]
         emu_value = Emu(int(round(quantity * multiplier)))
         return emu_value
+
+class Enum(ST_String):
+    @property
+    def alternatives(self):
+        return NotImplemented
+    @classmethod
+    def validate(cls, value):
+        cls.validate_enum(value, cls.alternatives)
+
+class ST_NumberFormat(Enum):
+    alternatives = NUMBER_FORMATS
+
+class ST_VerticalAlignRun(Enum):
+    alternatives = ('baseline', 'subscript', 'superscript')
+
+class ST_LevelSuffix(Enum):
+    alternatives = ("tab", "space",  "nothing")
+
+class HexNumber(ST_String):
+    @property
+    def octets(self):
+        return NotImplemented
+    @classmethod
+    def validate(cls, value):
+        if not re.match('^[0-9A-F]{%d}$' % (cls.octets * 2), value):
+            raise ValueError('Not a valid %s: "%s"' % (cls.__name__, value))
+
+class ST_LongHexNumber(HexNumber):
+    octets = 4
+
+class ST_ShortHexNumber(HexNumber):
+    octets = 2
+
+class ST_UcharHexNumber(HexNumber):
+    octets = 1
+

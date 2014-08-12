@@ -5,11 +5,45 @@ Custom element classes related to the numbering part
 """
 
 from .. import OxmlElement
-from ..shared import CT_DecimalNumber
-from ..simpletypes import ST_DecimalNumber
+from ..shared import CT_DecimalNumber, CT_String, CT_OnOff
+from ..text import CT_Jc, CT_PPr, CT_RPr
+from ..simpletypes import (
+    ST_String, ST_DecimalNumber, ST_OnOff,
+    ST_LongHexNumber, ST_NumberFormat, ST_LevelSuffix)
 from ..xmlchemy import (
-    BaseOxmlElement, OneAndOnlyOne, RequiredAttribute, ZeroOrMore, ZeroOrOne
+    BaseOxmlElement, OneAndOnlyOne, RequiredAttribute, OptionalAttribute,
+    ZeroOrMore, ZeroOrOne
 )
+
+class CT_LongHexNumber(BaseOxmlElement):
+    val = RequiredAttribute('w:val', ST_LongHexNumber)
+
+class CT_NumFmt(BaseOxmlElement):
+    val = RequiredAttribute('w:val', ST_NumberFormat)
+    format = OptionalAttribute('w:format', ST_String)
+
+class CT_LevelSuffix(BaseOxmlElement):
+    val = RequiredAttribute('w:val', ST_LevelSuffix)
+
+class CT_LevelText(BaseOxmlElement):
+    val = OptionalAttribute('w:val', ST_String)
+    null = OptionalAttribute('w:null', ST_OnOff)
+
+class CT_Lvl(BaseOxmlElement):
+    ilvl = RequiredAttribute('w:ilvl', ST_DecimalNumber)
+    tplc = OptionalAttribute('w:tplc', ST_LongHexNumber)
+    tentative = OptionalAttribute('w:tentative', ST_OnOff)
+    numFmt = ZeroOrOne('w:numFmt', CT_NumFmt)
+    lvlRestart = ZeroOrOne('w:lvlRestart', CT_DecimalNumber)
+    pStyle = ZeroOrOne('w:pStyle', CT_String)
+    isLgl = ZeroOrOne('w:isLgl', CT_OnOff)
+    suff = ZeroOrOne('w:suff', CT_LevelSuffix)
+    lvlText = ZeroOrOne('w:lvlText', CT_LevelText)
+    lvlPicBulletId = ZeroOrOne('w:lvlPicBulletId', CT_DecimalNumber)
+    # legacy = ZeroOrOne('w:legacy', CT_LvlLegacy)
+    lvlJc = ZeroOrOne('w:lvlJc', CT_Jc)
+    pPr = ZeroOrOne('w:pPr', CT_PPr)
+    rPr = ZeroOrOne('w:rPr', CT_RPr)
 
 
 class CT_Num(BaseOxmlElement):
@@ -105,7 +139,7 @@ class CT_Numbering(BaseOxmlElement):
         num = CT_Num.new(next_num_id, abstractNum_id)
         return self._insert_num(num)
 
-    def num_having_numId(self, numId):
+    def num_by_id(self, numId):
         """
         Return the ``<w:num>`` child element having ``numId`` attribute
         matching *numId*.
@@ -115,6 +149,30 @@ class CT_Numbering(BaseOxmlElement):
             return self.xpath(xpath)[0]
         except IndexError:
             raise KeyError('no <w:num> element with numId %d' % numId)
+
+    def abstractNum_by_id(self, abstractNumId):
+        """
+        Return the ``<w:num>`` child element having ``numId`` attribute
+        matching *numId*.
+        """
+        xpath = './w:abstractNum[@w:abstractNumId="%d"]' % abstractNumId
+        try:
+            return self.xpath(xpath)[0]
+        except IndexError:
+            raise KeyError('no <w:abstractNum> element with abstractNumId %d' %
+                           abstractNumId)
+
+    def num_style(self, numid, level):
+        num_info = self.num_by_id(numid)
+        override = num_info.xpath('./w:lvlOverride[@w:ilvl="%d"]' % level)
+        if override:
+            return override[0]
+        abstractNumId = int(num_info.xpath('./w:abstractNumId')[0].val)
+        xpath = './w:abstractNum[@w:abstractNumId="%d"]/w:lvl[@w:ilvl="%d"]' % (
+            numid, level)
+        return self.xpath(xpath)[0]
+
+
 
     @property
     def _next_numId(self):

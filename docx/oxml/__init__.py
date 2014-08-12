@@ -92,16 +92,29 @@ register_element_cls('w:body',     CT_Body)
 register_element_cls('w:document', CT_Document)
 
 from docx.oxml.parts.numbering import (
-    CT_Num, CT_Numbering, CT_NumLvl, CT_NumPr
-)
+    CT_Num, CT_Numbering, CT_NumLvl, CT_NumPr, CT_NumFmt,
+    CT_Lvl, CT_LongHexNumber, CT_NumLvl, CT_LevelText,
+    CT_LevelSuffix, CT_Jc, CT_Num)
 register_element_cls('w:abstractNumId', CT_DecimalNumber)
 register_element_cls('w:ilvl',          CT_DecimalNumber)
+register_element_cls('w:lvl',           CT_Lvl)
 register_element_cls('w:lvlOverride',   CT_NumLvl)
 register_element_cls('w:num',           CT_Num)
 register_element_cls('w:numId',         CT_DecimalNumber)
 register_element_cls('w:numPr',         CT_NumPr)
 register_element_cls('w:numbering',     CT_Numbering)
 register_element_cls('w:startOverride', CT_DecimalNumber)
+register_element_cls('w:lvlText',       CT_LevelText)
+register_element_cls('w:null',          CT_OnOff)
+register_element_cls('w:format',        CT_String)
+register_element_cls('w:numFmt',        CT_NumFmt)
+register_element_cls('w:lvlRestart',    CT_DecimalNumber)
+register_element_cls('w:pStyle',        CT_String)
+register_element_cls('w:isLgl',         CT_OnOff)
+register_element_cls('w:suff',          CT_LevelSuffix)
+register_element_cls('w:lvlText',       CT_LevelText)
+register_element_cls('w:lvlPicBulletId',CT_DecimalNumber)
+register_element_cls('w:lvlJc',         CT_Jc)
 
 from docx.oxml.parts.styles import CT_Style, CT_Styles
 register_element_cls('w:style',  CT_Style)
