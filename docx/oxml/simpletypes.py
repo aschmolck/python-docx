@@ -52,6 +52,11 @@ class BaseSimpleType(object):
         raise TypeError(
             "value must be a string, got %s" % type(value)
         )
+    @classmethod
+    def validate_enum(cls, value, allowed):
+        if value not in allowed:
+            raise ValueError("value must be in %s, got %s" % (allowed, value))
+
 
 
 class BaseStringType(BaseSimpleType):
@@ -170,25 +175,14 @@ class ST_BrClear(XsdString):
 
     @classmethod
     def validate(cls, value):
-        cls.validate_string(value)
-        valid_values = ('none', 'left', 'right', 'all')
-        if value not in valid_values:
-            raise ValueError(
-                "must be one of %s, got '%s'" % (valid_values, value)
-            )
+        cls.validate_enum(value, ('none', 'left', 'right', 'all'))
 
 
 class ST_BrType(XsdString):
 
     @classmethod
     def validate(cls, value):
-        cls.validate_string(value)
-        valid_values = ('page', 'column', 'textWrapping')
-        if value not in valid_values:
-            raise ValueError(
-                "must be one of %s, got '%s'" % (valid_values, value)
-            )
-
+        cls.validate_enum(value, ('page', 'column', 'textWrapping'))
 
 class ST_Coordinate(BaseIntType):
 
@@ -268,25 +262,13 @@ class ST_TblLayoutType(XsdString):
 
     @classmethod
     def validate(cls, value):
-        cls.validate_string(value)
-        valid_values = ('fixed', 'autofit')
-        if value not in valid_values:
-            raise ValueError(
-                "must be one of %s, got '%s'" % (valid_values, value)
-            )
-
+        cls.validate_enum(value, ('fixed', 'autofit'))
 
 class ST_TblWidth(XsdString):
 
     @classmethod
     def validate(cls, value):
-        cls.validate_string(value)
-        valid_values = ('auto', 'dxa', 'nil', 'pct')
-        if value not in valid_values:
-            raise ValueError(
-                "must be one of %s, got '%s'" % (valid_values, value)
-            )
-
+        cls.validate_enum(value, ('auto', 'dxa', 'nil', 'pct'))
 
 class ST_TwipsMeasure(XsdUnsignedLong):
 
