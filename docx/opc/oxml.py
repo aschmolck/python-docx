@@ -64,11 +64,9 @@ def serialize_for_reading(element):
     """
     return etree.tostring(element, encoding='unicode', pretty_print=True)
 
-
 # ===========================================================================
 # Custom element classes
 # ===========================================================================
-
 class BaseOxmlElement(etree.ElementBase):
     """
     Base class for all custom element classes, to add standardized behavior

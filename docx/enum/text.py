@@ -8,7 +8,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from .base import alias, XmlEnumeration, XmlMappedEnumMember
 
-
 @alias('WD_ALIGN_PARAGRAPH')
 class WD_PARAGRAPH_ALIGNMENT(XmlEnumeration):
     """

@@ -7,7 +7,9 @@ Custom element classes related to text, such as paragraph (CT_P) and runs
 
 from ..enum.text import WD_ALIGN_PARAGRAPH, WD_UNDERLINE
 from .ns import qn
-from .simpletypes import ST_BrClear, ST_BrType
+from .simpletypes import (
+    ST_BrClear, ST_BrType, ST_Hint, ST_String, ST_VerticalAlignRun
+)
 from .xmlchemy import (
     BaseOxmlElement, OptionalAttribute, OxmlElement, RequiredAttribute,
     ZeroOrMore, ZeroOrOne
@@ -28,6 +30,17 @@ class CT_Jc(BaseOxmlElement):
     """
     val = RequiredAttribute('w:val', WD_ALIGN_PARAGRAPH)
 
+class CT_RFonts(BaseOxmlElement):
+    hint = OptionalAttribute('w:hint', ST_Hint)
+    ascii, hAnsi, eastAsia, cs = (
+        OptionalAttribute(s, ST_String) for s in
+        'w:ascii w:hAnsi w:eastAsia w:cs'.split())
+    asciiTheme, hAnsiTheme, eastAsiaTheme, cstheme = (
+        OptionalAttribute(s, ST_String) for s in
+        'w:asciiTheme w:hAnsiTheme w:eastAsiaTheme w:cstheme'.split())
+
+class CT_VerticalAlignRun(BaseOxmlElement):
+    val = RequiredAttribute('w:val', ST_VerticalAlignRun)
 
 class CT_P(BaseOxmlElement):
     """
@@ -266,7 +279,6 @@ class CT_R(BaseOxmlElement):
         rPr = self.get_or_add_rPr()
         rPr.underline = value
 
-
 class CT_RPr(BaseOxmlElement):
     """
     ``<w:rPr>`` element, containing the properties for a run.
@@ -275,6 +287,7 @@ class CT_RPr(BaseOxmlElement):
     b = ZeroOrOne('w:b', successors=('w:rPrChange',))
     bCs = ZeroOrOne('w:bCs', successors=('w:rPrChange',))
     caps = ZeroOrOne('w:caps', successors=('w:rPrChange',))
+    color = ZeroOrOne('w:color', successors=('w:rPrChange',))
     cs = ZeroOrOne('w:cs', successors=('w:rPrChange',))
     dstrike = ZeroOrOne('w:dstrike', successors=('w:rPrChange',))
     emboss = ZeroOrOne('w:emboss', successors=('w:rPrChange',))
@@ -286,13 +299,16 @@ class CT_RPr(BaseOxmlElement):
     outline = ZeroOrOne('w:outline', successors=('w:rPrChange',))
     rtl = ZeroOrOne('w:rtl', successors=('w:rPrChange',))
     shadow = ZeroOrOne('w:shadow', successors=('w:rPrChange',))
+    shd = ZeroOrOne('w:shd', successors=('w:rPrChange',))
     smallCaps = ZeroOrOne('w:smallCaps', successors=('w:rPrChange',))
     snapToGrid = ZeroOrOne('w:snapToGrid', successors=('w:rPrChange',))
     specVanish = ZeroOrOne('w:specVanish', successors=('w:rPrChange',))
     strike = ZeroOrOne('w:strike', successors=('w:rPrChange',))
     u = ZeroOrOne('w:u', successors=('w:rPrChange',))
     vanish = ZeroOrOne('w:vanish', successors=('w:rPrChange',))
+    vertAlign = ZeroOrOne('w:vertAlign', successors=('w:rPrChange',))
     webHidden = ZeroOrOne('w:webHidden', successors=('w:rPrChange',))
+    rFonts = ZeroOrOne('w:rFonts', successors=('w:rPrChange',))
 
     @property
     def style(self):

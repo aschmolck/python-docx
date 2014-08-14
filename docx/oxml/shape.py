@@ -8,7 +8,7 @@ from . import parse_xml
 from .ns import nsdecls
 from .simpletypes import (
     ST_Coordinate, ST_DrawingElementId, ST_PositiveCoordinate,
-    ST_RelationshipId, XsdString, XsdToken
+    ST_RelationshipId, XsdString, XsdToken, ST_HexColor, ST_Shd
 )
 from .xmlchemy import (
     BaseOxmlElement, OneAndOnlyOne, OptionalAttribute, RequiredAttribute,
@@ -270,3 +270,18 @@ class CT_Transform2D(BaseOxmlElement):
     def cy(self, value):
         ext = self.get_or_add_ext()
         ext.cy = value
+
+
+
+class CT_Color(BaseOxmlElement):
+    val = RequiredAttribute('w:val', ST_HexColor)
+    # <xsd:attribute name="themeColor" type="ST_ThemeColor" use="optional"/>
+    # <xsd:attribute name="themeTint" type="ST_UcharHexNumber" use="optional"/>
+    # <xsd:attribute name="themeShade" type="ST_UcharHexNumber" use="optional"/>
+
+class CT_Shd(BaseOxmlElement):
+    val = RequiredAttribute('w:val', ST_Shd)
+    color = OptionalAttribute('w:color', ST_HexColor)
+    # <xsd:attribute name="themeColor" type="ST_ThemeColor" use="optional"/>
+    # <xsd:attribute name="themeTint" type="ST_UcharHexNumber" use="optional"/>
+    # <xsd:attribute name="themeShade" type="ST_UcharHexNumber" use="optional"/>

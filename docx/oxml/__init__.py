@@ -71,7 +71,9 @@ from docx.oxml.shape import (
     CT_GraphicalObjectData, CT_Inline, CT_NonVisualDrawingProps, CT_Picture,
     CT_PictureNonVisual, CT_Point2D, CT_PositiveSize2D, CT_ShapeProperties,
     CT_Transform2D
+
 )
+from docx.oxml.text import CT_RFonts, CT_VerticalAlignRun
 register_element_cls('a:blip',        CT_Blip)
 register_element_cls('a:ext',         CT_PositiveSize2D)
 register_element_cls('a:graphic',     CT_GraphicalObject)
@@ -115,6 +117,12 @@ register_element_cls('w:suff',          CT_LevelSuffix)
 register_element_cls('w:lvlText',       CT_LevelText)
 register_element_cls('w:lvlPicBulletId',CT_DecimalNumber)
 register_element_cls('w:lvlJc',         CT_Jc)
+
+
+
+from docx.oxml.shape import CT_Color, CT_Shd
+register_element_cls('w:color', CT_Color) # FIXME(alexander)
+register_element_cls('w:shd', CT_Shd) # FIXME(alexander)
 
 from docx.oxml.parts.styles import CT_Style, CT_Styles
 register_element_cls('w:style',  CT_Style)
@@ -174,3 +182,5 @@ register_element_cls('w:t',          CT_Text)
 register_element_cls('w:u',          CT_Underline)
 register_element_cls('w:vanish',     CT_OnOff)
 register_element_cls('w:webHidden',  CT_OnOff)
+register_element_cls('w:rFonts',     CT_RFonts)
+register_element_cls('w:vertAlign',  CT_VerticalAlignRun)
