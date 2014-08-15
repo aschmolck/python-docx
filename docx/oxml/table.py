@@ -92,6 +92,7 @@ class CT_TblPr(BaseOxmlElement):
         'w:tblInd', 'w:tblBorders', 'w:shd', 'w:tblLayout', 'w:tblCellMar',
         'w:tblLook', 'w:tblCaption', 'w:tblDescription', 'w:tblPrChange'
     ))
+    #FIXME tblW
     tblLayout = ZeroOrOne('w:tblLayout', successors=(
         'w:tblLayout', 'w:tblCellMar', 'w:tblLook', 'w:tblCaption',
         'w:tblDescription', 'w:tblPrChange'

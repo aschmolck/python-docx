@@ -8,7 +8,8 @@ Custom element classes related to text, such as paragraph (CT_P) and runs
 from ..enum.text import WD_ALIGN_PARAGRAPH, WD_UNDERLINE
 from .ns import qn
 from .simpletypes import (
-    ST_BrClear, ST_BrType, ST_Hint, ST_String, ST_VerticalAlignRun
+    ST_BrClear, ST_BrType, ST_Hint, ST_String, ST_VerticalAlignRun,
+    ST_SignedTwipsMeasure, ST_DecimalNumber
 )
 from .xmlchemy import (
     BaseOxmlElement, OptionalAttribute, OxmlElement, RequiredAttribute,
@@ -62,6 +63,11 @@ class CT_P(BaseOxmlElement):
         return new_p
 
     @property
+    def indent(self):
+        return getattr(self.pPr, 'ind', None)
+
+
+    @property
     def alignment(self):
         """
         The value of the ``<w:jc>`` grandchild element or |None| if not
@@ -112,6 +118,21 @@ class CT_P(BaseOxmlElement):
         pPr.style = style
 
 
+class CT_Ind(BaseOxmlElement):
+    start = OptionalAttribute('w:start', ST_SignedTwipsMeasure)
+    startChars = OptionalAttribute('w:startChars', ST_DecimalNumber)
+    end = OptionalAttribute('w:end', ST_SignedTwipsMeasure)
+    endChars = OptionalAttribute('w:endChars', ST_DecimalNumber)
+    left = OptionalAttribute('w:left', ST_SignedTwipsMeasure)
+    leftChars = OptionalAttribute('w:leftChars', ST_DecimalNumber)
+    right = OptionalAttribute('w:right', ST_SignedTwipsMeasure)
+    rightChars = OptionalAttribute('w:rightChars', ST_DecimalNumber)
+    hanging = OptionalAttribute('w:hanging', ST_SignedTwipsMeasure)
+    hangingChars = OptionalAttribute('w:hangingChars', ST_DecimalNumber)
+    firstLine = OptionalAttribute('w:firstLine', ST_SignedTwipsMeasure)
+    firstLineChars = OptionalAttribute('w:firstLineChars', ST_DecimalNumber)
+
+
 class CT_PPr(BaseOxmlElement):
     """
     ``<w:pPr>`` element, containing the properties for a paragraph.
@@ -129,6 +150,7 @@ class CT_PPr(BaseOxmlElement):
     )
     pStyle = ZeroOrOne('w:pStyle')
     numPr = ZeroOrOne('w:numPr', successors=__child_sequence__[7:])
+    ind = ZeroOrOne('w:ind', successors=__child_sequence__[23:])
     jc = ZeroOrOne('w:jc', successors=__child_sequence__[27:])
     sectPr = ZeroOrOne('w:sectPr', successors=('w:pPrChange',))
 
