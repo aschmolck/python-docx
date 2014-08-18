@@ -698,13 +698,13 @@ class _OxmlElementBase(etree.ElementBase):
     """
 
     __metaclass__ = MetaOxmlElement
-    default = dir(etree.ElementBase)
+    __default = dir(etree.ElementBase)
     def __repr__(self):
         from pprint import pformat
         relevant = [k for k in dir(self)
-                    if k not in self.default
+                    if k not in self.__default
                     and not k.startswith('_')
-                    and k not in ('xml', 'default')
+                    and k != 'xml'
                     and not callable(getattr(self, k))
                     and getattr(self, k) not in (None, [])]
         if relevant == ['val']: return repr(self.val)
