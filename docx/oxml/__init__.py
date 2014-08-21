@@ -134,6 +134,7 @@ register_element_cls('w:pgSz',   CT_PageSz)
 register_element_cls('w:sectPr', CT_SectPr)
 register_element_cls('w:type',   CT_SectType)
 
+
 from docx.oxml.table import (
     CT_Row, CT_Tbl, CT_TblGrid, CT_TblGridCol, CT_TblLayoutType, CT_TblPr,
     CT_TblWidth, CT_Tc, CT_TcPr
@@ -187,3 +188,11 @@ register_element_cls('w:vanish',     CT_OnOff)
 register_element_cls('w:webHidden',  CT_OnOff)
 register_element_cls('w:rFonts',     CT_RFonts)
 register_element_cls('w:vertAlign',  CT_VerticalAlignRun)
+
+from docx.oxml.parts.notes import CT_Endnotes, CT_Footnotes, CT_Note, CT_EndnoteReference, CT_FootnoteReference
+register_element_cls('w:endnotes', CT_Endnotes)
+register_element_cls('w:endnote', CT_Note)
+register_element_cls('w:footnotes', CT_Footnotes)
+register_element_cls('w:footnote', CT_Note)
+register_element_cls('w:endnoteReference', CT_EndnoteReference)
+register_element_cls('w:footnoteReference', CT_FootnoteReference)

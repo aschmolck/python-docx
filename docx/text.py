@@ -6,8 +6,12 @@ Text-related proxy types for python-docx, such as Paragraph and Run.
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from .enum.text import WD_BREAK
-from .shared import Parented
+
+from docx.oxml.text import CT_RPr, CT_Text, CT_Br, CT_Tab
+from docx.oxml.parts.notes import CT_EndnoteReference, CT_FootnoteReference
+from docx.enum.text import WD_BREAK
+from docx.shared import Parented
+
 
 
 def boolproperty(f):
@@ -163,6 +167,44 @@ class Paragraph(Parented):
         self.add_run(text)
 
 
+
+class Text(object):
+    """
+    Proxy object wrapping ``<w:t>`` element.
+    """
+    def __init__(self, t_elm):
+        super(Text, self).__init__()
+        self._t = t_elm
+
+
+class NoteReference(object):
+
+    def __init__(self, el, note_type=None):
+        self._element = el
+
+    @property
+    def id(self):
+        return self._element.id
+
+
+class EndnoteReference(NoteReference):
+    pass
+
+
+class FootnoteReference(NoteReference):
+    pass
+
+
+class RunElement(object):
+
+    def __init__(self, el):
+        self._element = el
+
+
+class LineBreak(RunElement): pass
+class Tab(RunElement): pass
+
+
 class Run(Parented):
     """
     Proxy object wrapping ``<w:r>`` element. Several of the properties on Run
@@ -174,6 +216,32 @@ class Run(Parented):
     def __init__(self, r, parent):
         super(Run, self).__init__(parent)
         self._r = r
+
+    _elements_map = {
+        CT_RPr:None,
+        CT_Text:Text,
+        CT_Br:LineBreak,
+        CT_Tab:Tab,
+        CT_EndnoteReference:EndnoteReference,
+        CT_FootnoteReference:FootnoteReference,
+    }
+
+
+    def get_elements(self):
+
+        elements_map = self._elements_map
+
+        for el in self._r.getchildren():
+
+            element_type = type(el)
+
+            if element_type not in elements_map:
+                raise ValueError("No mapping for element type %s" % element_type)
+
+            wrapper = elements_map.get(element_type)
+
+            if wrapper:
+                yield wrapper(el)
 
     def add_break(self, break_type=WD_BREAK.LINE):
         """
@@ -452,6 +520,14 @@ class Run(Parented):
         self._r.text = text
 
     @property
+    def endnote_references(self):
+        return [EndnoteReference(el, 'endnote') for el in self._r.endnote_refs]
+
+    @property
+    def footnote_references(self):
+        return [FootnoteReference(el, 'footnote') for el in self._r.footnote_refs]
+
+    @property
     def underline(self):
         """
         The underline style for this |Run|, one of |None|, |True|, |False|,
@@ -478,12 +554,3 @@ class Run(Parented):
         page view.
         """
         return 'webHidden'
-
-
-class Text(object):
-    """
-    Proxy object wrapping ``<w:t>`` element.
-    """
-    def __init__(self, t_elm):
-        super(Text, self).__init__()
-        self._t = t_elm

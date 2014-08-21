@@ -14,6 +14,20 @@ class CT_Style(BaseOxmlElement):
     pPr = ZeroOrOne('w:pPr', successors=(
         'w:rPr', 'w:tblPr', 'w:trPr', 'w:tcPr', 'w:tblStylePr'
     ))
+    
+    @property
+    def id(self):
+        return self.attrib.get(qn('w:styleId'))
+    
+    @property
+    def type(self):
+        return self.attrib.get(qn('w:type'))
+    
+    @property
+    def name(self):
+        el = self.find(qn('w:name'))
+        if el is not None:
+            return el.attrib.get(qn('w:val'))
 
 
 class CT_Styles(BaseOxmlElement):

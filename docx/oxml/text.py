@@ -5,7 +5,7 @@ Custom element classes related to text, such as paragraph (CT_P) and runs
 (CT_R).
 """
 
-from ..enum.text import WD_ALIGN_PARAGRAPH, WD_UNDERLINE
+from ..enum.text import WD_UNDERLINE, WD_ALIGN_PARAGRAPH
 from .ns import qn
 from .simpletypes import (
     ST_BrClear, ST_BrType, ST_Hint, ST_String, ST_VerticalAlignRun,
@@ -15,6 +15,14 @@ from .xmlchemy import (
     BaseOxmlElement, OptionalAttribute, OxmlElement, RequiredAttribute,
     ZeroOrMore, ZeroOrOne
 )
+
+
+class CT_Tab(BaseOxmlElement):
+
+    @classmethod
+    def new(cls):
+        return OxmlElement('w:tab')
+
 
 
 class CT_Br(BaseOxmlElement):
@@ -284,6 +292,15 @@ class CT_R(BaseOxmlElement):
     def text(self, text):
         self.clear_content()
         _RunContentAppender.append_to_run_from_text(self, text)
+        return self.findall(qn('w:t'))
+
+    @property
+    def endnote_refs(self):
+        return self.findall(qn('w:endnoteReference'))
+
+    @property
+    def footnote_refs(self):
+        return self.findall(qn('w:footnoteReference'))
 
     @property
     def underline(self):
